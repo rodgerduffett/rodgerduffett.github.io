@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password v5</title>
+    <title>Reset Password v6</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; }
         input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
@@ -23,12 +23,12 @@
     <button type="submit" id="submitBtn">Reset Password</button>
 </form>
 <div id="message"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
     const SUPABASE_URL = 'https://jfhiyeyfjaqemfdftwif.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk';
+    import { createClient } from '@supabase/supabase-js'
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     console.log('supabase client:',supabase);
