@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-<h2>Reset your password 9</h2>
+<h2>Reset your password 10</h2>
 <div id="loading">Loading...</div>
 <div id="message"></div>
 
@@ -36,6 +36,7 @@
       console.log('establised session:', event, session);
       if (event === "PASSWORD_RECOVERY") {
         // Show the reset form
+        console.log('password recovery triggered);
         loadingDiv.style.display = "none";
         resetForm.style.display = "block";
         messageDiv.innerHTML = `<div class="success">Enter your new password below.</div>`;
