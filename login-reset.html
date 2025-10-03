@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-<h2>Reset your password</h2>
+<h2>Reset your password 7</h2>
 <div id="loading">Loading...</div>
 <div id="message"></div>
 
@@ -21,12 +21,11 @@
     <label for="newPassword"></label><input type="password" id="newPassword" placeholder="Enter new password" required />
     <button type="submit">Update Password</button>
 </form>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js";
-
     const SUPABASE_URL = "https://jfhiyeyfjaqemfdftwif.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk"; // 🔑 Replace with your anon key
+    import { createClient } from '@supabase/supabase-js'
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const loadingDiv = document.getElementById("loading");
