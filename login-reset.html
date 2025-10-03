@@ -26,7 +26,7 @@
     const SUPABASE_URL = "https://jfhiyeyfjaqemfdftwif.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk"; // 🔑 Replace with your anon key
     import { createClient } from '@supabase/supabase-js'
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const loadingDiv = document.getElementById("loading");
     const resetForm = document.getElementById("resetForm");
