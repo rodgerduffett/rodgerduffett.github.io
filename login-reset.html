@@ -31,7 +31,7 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk';
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log(supabase);
+    console.log('supabase client:',supabase);
 
     const messageDiv = document.getElementById('message');
     const submitBtn = document.getElementById('submitBtn');
@@ -42,7 +42,7 @@
     async function handleAuthCallback() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
-        console.log(code);
+        console.log('code:',code);
         if (!code) {
             messageDiv.innerHTML = '<div class="error">Invalid or expired reset link</div>';
             loadingDiv.style.display = 'none';
@@ -52,7 +52,7 @@
         try {
             // Exchange the code for a session
             const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-            console.log(data,error);
+            console.log('session data:',data,error);
             if (error) throw error;
 
             // Show the form
@@ -61,7 +61,7 @@
             messageDiv.innerHTML = '<div class="success">Enter your new password below.</div>';
 
         } catch (error) {
-            console.log(data,error);
+            console.log('session data:',data,error);
             messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
             loadingDiv.style.display = 'none';
         }
