@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-<h2>Reset your password 8</h2>
+<h2>Reset your password 9</h2>
 <div id="loading">Loading...</div>
 <div id="message"></div>
 
@@ -26,13 +26,14 @@
     const SUPABASE_URL = "https://jfhiyeyfjaqemfdftwif.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk"; // 🔑 Replace with your anon key
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+    console.log('created client:', supabase)
     const loadingDiv = document.getElementById("loading");
     const resetForm = document.getElementById("resetForm");
     const messageDiv = document.getElementById("message");
 
     // Listen for Supabase auth state changes
     supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('establised session:', event, session);
       if (event === "PASSWORD_RECOVERY") {
         // Show the reset form
         loadingDiv.style.display = "none";
