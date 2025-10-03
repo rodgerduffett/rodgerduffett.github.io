@@ -1,60 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Reset Password</title>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <meta charset="UTF-8" />
+    <title>Password Reset</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-<h2>Reset Your Password</h2>
-<form id="reset-form" style="display:none;">
-    <label>
-        New password:
-        <input type="password" id="new-password" required />
-    </label>
-    <button type="submit">Update Password</button>
-</form>
-<p id="status"></p>
+<h2>Resetting your password...</h2>
+<div id="message"></div>
 
 <script>
-    const SUPABASE_URL = "https://jfhiyeyfjaqemfdftwif.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk";
+    // 1. Initialize Supabase client
+    const supabaseUrl = "https://jfhiyeyfjaqemfdftwif.supabase.co";
+    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk";  // replace with your anon key
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // 2. Handle the recovery link
+    async function handleRecovery() {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get("access_token");
+      const refreshToken = hashParams.get("refresh_token");
 
-    async function init() {
-      // 👇 Exchange PKCE code from URL for a valid session
-      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+      if (accessToken && refreshToken) {
+        // Exchange tokens and set session
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
 
-      if (error) {
-        document.getElementById("status").textContent = "Error: " + error.message;
-        return;
-      }
-
-      if (data?.session) {
-        // Now user is authenticated for password recovery
-        document.getElementById("status").textContent = "Enter a new password below:";
-        document.getElementById("reset-form").style.display = "block";
+        if (error) {
+          document.getElementById("message").textContent = "Error: " + error.message;
+        } else {
+          document.getElementById("message").textContent =
+            "Session restored! You can now reset your password.";
+          // redirect to your app or show a reset form here
+        }
+      } else {
+        document.getElementById("message").textContent =
+          "Invalid recovery link. Missing tokens.";
       }
     }
 
-    init();
-
-    document.getElementById("reset-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const newPassword = document.getElementById("new-password").value;
-
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
-
-      if (error) {
-        document.getElementById("status").textContent = "Error: " + error.message;
-      } else {
-        document.getElementById("status").textContent = "✅ Password updated. You can now log in with your new password.";
-        document.getElementById("reset-form").style.display = "none";
-      }
-    });
+    handleRecovery();
 </script>
 </body>
 </html>
