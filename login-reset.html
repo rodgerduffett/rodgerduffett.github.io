@@ -16,28 +16,57 @@
 </head>
 <body>
 <h2>Reset Your Password</h2>
-<form id="resetForm">
-    <label for="password"></label><input type="password" id="password" placeholder="New password" required minlength="6">
-    <label for="confirmPassword"></label><input type="password" id="confirmPassword" placeholder="Confirm password" required minlength="6">
+<div id="loading">Loading...</div>
+<form id="resetForm" style="display: none;">
+    <input type="password" id="password" placeholder="New password" required minlength="6">
+    <input type="password" id="confirmPassword" placeholder="Confirm password" required minlength="6">
     <button type="submit" id="submitBtn">Reset Password</button>
 </form>
 <div id="message"></div>
 
-<script>
-    const SUPABASE_URL = 'https://jfhiyeyfjaqemfdftwif.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk'; // Get from Supabase dashboard
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const accessToken = hashParams.get('access_token');
+    const SUPABASE_URL = 'https://jfhiyeyfjaqemfdftwif.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaGl5ZXlmamFxZW1mZGZ0d2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDg0NDIsImV4cCI6MjA2OTEyNDQ0Mn0.Qf6Ah0GxuCW_kOnWhDVac9zIOpxy_pOd3dMdKDuk9gk';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const messageDiv = document.getElementById('message');
     const submitBtn = document.getElementById('submitBtn');
+    const loadingDiv = document.getElementById('loading');
+    const resetForm = document.getElementById('resetForm');
 
-    if (!accessToken) {
-        messageDiv.innerHTML = '<div class="error">Invalid or expired reset link</div>';
-        document.getElementById('resetForm').style.display = 'none';
+    // Handle the PKCE code exchange
+    async function handleAuthCallback() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (!code) {
+            messageDiv.innerHTML = '<div class="error">Invalid or expired reset link</div>';
+            loadingDiv.style.display = 'none';
+            return;
+        }
+
+        try {
+            // Exchange the code for a session
+            const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+            if (error) throw error;
+
+            // Show the form
+            loadingDiv.style.display = 'none';
+            resetForm.style.display = 'block';
+            messageDiv.innerHTML = '<div class="success">Enter your new password below.</div>';
+
+        } catch (error) {
+            messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            loadingDiv.style.display = 'none';
+        }
     }
 
-    document.getElementById('resetForm').addEventListener('submit', async (e) => {
+    // Handle password reset form submission
+    resetForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const password = document.getElementById('password').value;
@@ -52,31 +81,23 @@
         submitBtn.textContent = 'Resetting...';
 
         try {
-            const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
-                    'apikey': SUPABASE_ANON_KEY
-                },
-                body: JSON.stringify({ password })
+            const { data, error } = await supabase.auth.updateUser({
+                password: password
             });
 
-            if (response.ok) {
-                messageDiv.innerHTML = '<div class="success">Password reset successfully! You can now close this page and log in with your new password.</div>';
-                document.getElementById('resetForm').style.display = 'none';
-            } else {
-                const error = await response.json();
-                messageDiv.innerHTML = `<div class="error">Error: ${error.msg || 'Failed to reset password'}</div>`;
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Reset Password';
-            }
+            if (error) throw error;
+
+            messageDiv.innerHTML = '<div class="success">Password reset successfully! You can now close this page and log in with your new password.</div>';
+            resetForm.style.display = 'none';
         } catch (error) {
-            messageDiv.innerHTML = '<div class="error">Network error. Please try again.</div>';
+            messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
             submitBtn.disabled = false;
             submitBtn.textContent = 'Reset Password';
         }
     });
+
+    // Initialize
+    handleAuthCallback();
 </script>
 </body>
 </html>
